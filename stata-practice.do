@@ -2,6 +2,7 @@
 
 	sysuse cancer, clear
 	describe
+	notes
 	summarize
 	su age
 	histogram age
@@ -28,5 +29,9 @@
 		label define rating 1 "Very poor" 2 "Poor" 3 "Okay" 4 "Good" 5 "Very good" -9 "Missing"
 		label values sch_st rating
 		label values sch_com rating
-
-/////////// P38 (68)
+	
+	// edit and browse
+	edit, nolabel
+	browse, nolabel
+	
+	

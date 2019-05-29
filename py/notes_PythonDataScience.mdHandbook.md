@@ -5,27 +5,19 @@
 * Accessing source code
 * Exploring Modules/Importing with Tab-completion/WildCard matching
 	* Using underscore to list explicitly private and special methods
-  ```
-    str.*find*?
-  ```
+  ```str.*find*? ```
 ## 2. NumPy Intro
 *"to think of all data fundamentally as arrays of numbers"*
 ### Understanding Data Types in Python
 * compare to Java and C, Python is dynamically-typed language.
 * versus Python List (dynamic-type), NumPy is
 	* fixed-type array
-	```
-	np.array([1,2,3,4], dtype='float32')
-	```
+	```np.array([1,2,3,4], dtype='float32')```
 	* which can explicitly be multidimensional
-	```
-	np.array([range(i,i+3) for i in [2,4,6]])
-	```
+	```np.array([range(i,i+3) for i in [2,4,6]])```
 * it is more efficient to create arrays from scratch using routines built in NumPy
 	e.g. Create a 3x3 array of normally distributed random values with mean 0 and sd 1
-	```
-	np.random.normal(0,1,(3,3))
-	```
+	```np.random.normal(0,1,(3,3))```
 * standard data types in NumPy = those in C
 ### The Basics of NumPy Arrays
 *"data manipulation is Python is nearly synonymous with NumPy array manipulation"*
@@ -36,17 +28,15 @@ x1 = np.random.randint(10, size=6)  # One-dimensional array
 x2 = np.random.randint(10, size=(3, 4))  # Two-dimensional array
 x3 = np.random.randint(10, size=(3, 4, 5))  # Three-dimensional array
 ```
-* attributes: x3.ndim .shape .size .dtype .itemsize .nbytes
-* indexing: x3[a,b,c]
-* slicing: x[start:stop:step], x3[start:stop:step,start:stop:step,start:stop:step]
-	* accessing rows and columns: x2[:,0] # columns
+* attributes: ```x3.ndim .shape .size .dtype .itemsize .nbytes```
+* indexing: ```x3[a,b,c]```
+* slicing: ```x[start:stop:step], x3[start:stop:step,start:stop:step,start:stop:step]```
+	* accessing rows and columns: ```x2[:,0] # columns```
 	* array returns views rather than copies of the array data
 	* using .copy() to create copy: e.g., ```x2_sub_copy = x2[:2,:2].copy()```
 * reshaping
 	* shaping values into grid
-	```
-	grid = np.arange(1, 10).reshape((3, 3))
-	```
+	``` grid = np.arange(1, 10).reshape((3, 3))```
 	* converting one-dim array into two-dim row/column matrix
 	```
 	x = np.array([1,2,3])
@@ -80,17 +70,38 @@ The key to make the computation on NumPy arrays fast is to use **vectorized** op
 	* push the loop into the compiled layer that underlies NumPy
 
 * universal functions:
-	* array arithmetic: + - * / // - ** %
+	* array arithmetic: ```+ - * / // - ** %```
 		* each arithmetic operation is a convenient wrapper around a function in NumPy
-	* absolute value: abs(array)
-	* trigonometric functions: np.sin(theta), np.cos(), np.tan()
-		* inverse: np.arcsin(), np.arccos(), np.arctan()
-	* exponents and logarithms: np.exp(), np.exp2(), np.power(3,x); np.log(), np.log2, np.log10
-		* no.expm1(), np.log1p() used for very small input
-	* specialized ufuncs
-		scipy.special	
+	* absolute value: ```abs(array)```
+	* trigonometric functions: ```np.sin(theta), np.cos(), np.tan()```
+		* inverse: ```np.arcsin(), np.arccos(), np.arctan()```
+	* exponents and logarithms: 
+		* ```np.exp(), np.exp2(), np.power(3,x)```
+		* ```np.log(), np.log2, np.log10```
+		* ```no.expm1(), np.log1p()       #for very small input```
+	* specialized ufuncs: ```from scipy import special```	
 * advanced ufunc features
-	* specifying output
+	* specifying output: using the ```out``` argument of the function
+		```
+		x = np.arange(5)
+		y = np.empty(5)
+		np.multiply(x, 10, out=y)	# for memory saving
+		z = np.zeros(10)
+		np.power(2,x,out=z[::2]		# to avoid creating a temporary array
+		```
+	* aggregates
+		* ```reduce``` repeatedly applies a given operation to the elements of an array until only a single result remains
+		```
+		np.add.reduce(x)	# returns the sum of all elements in array x
+		np.multiply.reduce(x)	# returns the product of all elements in array x
+		```
+		* ```accumulate``` stores all the intermidiate results of the computation
+		```
+		np.add.accumulate(x)
+		np.multiply.accumulate(x)
+		```
+	* outer products: compute the output of all paris of two different inputs using ```outer``` method
+		* ```np.multiply.outer(x, x)```
 ### Aggregations: Min, Max, and Everything In Between
 ### Computation on Arrays: Broadcasting
 ### Comparisons, Masks, and Boolean Logic

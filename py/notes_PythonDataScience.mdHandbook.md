@@ -74,26 +74,23 @@ x3 = np.random.randint(10, size=(3, 4, 5))  # Three-dimensional array
 *NumPy provides an easy and flexible interface to optimized computation with arrays of data*
 The key to make the computation on NumPy arrays fast is to use **vectorized** operations, which are generally implemented through NumPy's *universal functions*(ufuncs)
 
-vectorized operations: 
-* statically typed, compiled routine to replace loop 
-* accomplished by performing on the array, which will then be applied to each element
-* push the loop into the compiled layer that underlies NumPy
+* vectorized operations: 
+	* statically typed, compiled routine to replace loop 
+	* accomplished by performing on the array, which will then be applied to each element
+	* push the loop into the compiled layer that underlies NumPy
 
-universal functions:
-- unary ufuncs: operates on a single input
-- binary ufuncs: operators on two inputs
-* array arithmetic: + - * / // - ** %
-	* each arithmetic operation is a convenient wrapper around a function in NumPy
-* absolute value: abs(array)
-* trigonometric functions: np.sin(theta), np.cos(), np.tan()
-	* inverse: np.arcsin(), np.arccos(), np.arctan()
-* exponents and logarithms: np.exp(), np.exp2(), np.power(3,x); np.log(), np.log2, np.log10
-	* no.expm1(), np.log1p() used for very small input
-* specialized ufuncs
-	scipy.special
-	
-advanced ufunc features
-
+* universal functions:
+	* array arithmetic: + - * / // - ** %
+		* each arithmetic operation is a convenient wrapper around a function in NumPy
+	* absolute value: abs(array)
+	* trigonometric functions: np.sin(theta), np.cos(), np.tan()
+		* inverse: np.arcsin(), np.arccos(), np.arctan()
+	* exponents and logarithms: np.exp(), np.exp2(), np.power(3,x); np.log(), np.log2, np.log10
+		* no.expm1(), np.log1p() used for very small input
+	* specialized ufuncs
+		scipy.special	
+* advanced ufunc features
+	* specifying output
 ### Aggregations: Min, Max, and Everything In Between
 ### Computation on Arrays: Broadcasting
 ### Comparisons, Masks, and Boolean Logic

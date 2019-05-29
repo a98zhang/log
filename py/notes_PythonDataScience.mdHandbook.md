@@ -41,13 +41,59 @@ x3 = np.random.randint(10, size=(3, 4, 5))  # Three-dimensional array
 * slicing: x[start:stop:step], x3[start:stop:step,start:stop:step,start:stop:step]
 	* accessing rows and columns: x2[:,0] # columns
 	* array returns views rather than copies of the array data
-	* using .copy() to create copy: e.g., x2_sub_copy = x2[:2,:2].copy()
+	* using .copy() to create copy: e.g., ```x2_sub_copy = x2[:2,:2].copy()```
 * reshaping
+	* shaping values into grid
 	```
 	grid = np.arange(1, 10).reshape((3, 3))
 	```
+	* converting one-dim array into two-dim row/column matrix
+	```
+	x = np.array([1,2,3])
+	x.reshape((1,3))  	# row vector via reshape
+	x[np.newaxis, :]	# row vector via newaxis
+	x.reshape((3,1))	# column vector via reshape
+	x[:, np.newaxis]	# column vector via newaxis
+	```
 * joining and splitting
+	* concatenating arrays
+	```
+	np.concatenate([x,y,z])		# takes a tuple or list of arrays (mark the axis)
+	np.vstack([x, grid])			# vertical stack
+	np.hstack([grid, y])			# horizontal stack
+	np.dstack				# stack arrays along the third axis
+	```
+	* splitting arrays
+	``` 
+	x1, x2, x3 = np.split(x,[3,5])	     # given a list of indices as the split points
+	upper, lower = np.vsplit(grid, [2])
+	left, right = np.hsplit(grid, [2])
+	np.dsplit
+	```
 ### Computation on NumPy Arrays: Universal Functions
+*NumPy provides an easy and flexible interface to optimized computation with arrays of data*
+The key to make the computation on NumPy arrays fast is to use **vectorized** operations, which are generally implemented through NumPy's *universal functions*(ufuncs)
+
+vectorized operations: 
+* statically typed, compiled routine to replace loop 
+* accomplished by performing on the array, which will then be applied to each element
+* push the loop into the compiled layer that underlies NumPy
+
+universal functions:
+- unary ufuncs: operates on a single input
+- binary ufuncs: operators on two inputs
+* array arithmetic: + - * / // - ** %
+	* each arithmetic operation is a convenient wrapper around a function in NumPy
+* absolute value: abs(array)
+* trigonometric functions: np.sin(theta), np.cos(), np.tan()
+	* inverse: np.arcsin(), np.arccos(), np.arctan()
+* exponents and logarithms: np.exp(), np.exp2(), np.power(3,x); np.log(), np.log2, np.log10
+	* no.expm1(), np.log1p() used for very small input
+* specialized ufuncs
+	scipy.special
+	
+advanced ufunc features
+
 ### Aggregations: Min, Max, and Everything In Between
 ### Computation on Arrays: Broadcasting
 ### Comparisons, Masks, and Boolean Logic

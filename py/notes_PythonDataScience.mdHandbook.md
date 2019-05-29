@@ -43,9 +43,8 @@ x3 = np.random.randint(10, size=(3, 4, 5))  # Three-dimensional array
 	* array returns views rather than copies of the array data
 	* using .copy() to create copy: e.g., x2_sub_copy = x2[:2,:2].copy()
 * reshaping
-	* 
 	```
-	grid = np.arange(1, 10).reshape((3, 3)) # put the numbers 1 in a 3 by 3 grid
+	grid = np.arange(1, 10).reshape((3, 3))
 	```
 * joining and splitting
 ### Computation on NumPy Arrays: Universal Functions

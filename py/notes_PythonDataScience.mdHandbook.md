@@ -29,6 +29,25 @@
 * standard data types in NumPy = those in C
 ### The Basics of NumPy Arrays
 *"data manipulation is Python is nearly synonymous with NumPy array manipulation"*
+```
+import numpy as np
+np.random.seed(0)  # seed for reproducibility
+x1 = np.random.randint(10, size=6)  # One-dimensional array
+x2 = np.random.randint(10, size=(3, 4))  # Two-dimensional array
+x3 = np.random.randint(10, size=(3, 4, 5))  # Three-dimensional array
+```
+* attributes: x3.ndim .shape .size .dtype .itemsize .nbytes
+* indexing: x3[a,b,c]
+* slicing: x[start:stop:step], x3[start:stop:step,start:stop:step,start:stop:step]
+	* accessing rows and columns: x2[:,0] # columns
+	* array returns views rather than copies of the array data
+	* using .copy() to create copy: e.g., x2_sub_copy = x2[:2,:2].copy()
+* reshaping
+	* 
+	```
+	grid = np.arange(1, 10).reshape((3, 3)) # put the numbers 1 in a 3 by 3 grid
+	```
+* joining and splitting
 ### Computation on NumPy Arrays: Universal Functions
 ### Aggregations: Min, Max, and Everything In Between
 ### Computation on Arrays: Broadcasting

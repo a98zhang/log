@@ -103,7 +103,18 @@ The key to make the computation on NumPy arrays fast is to use **vectorized** op
 	* outer products: compute the output of all paris of two different inputs using ```outer``` method
 		* ```np.multiply.outer(x, x)```
 ### Aggregations: Min, Max, and Everything In Between
+*often when faced with a large amount of data, a first step is to compute summary statistics for the data in question, which are fundamental pieces of exploratory data analysis*
+* sum the values in an array: ```np.sum(L)/L.sum()```
+* minimum and maximum: 	```np.min(L)/L.min(),np.max(L)/L.max()```
+* multi dimensional aggregates: ```M.min(axis=0) # find the minimum within each column```
+	* ```axis``` keyword specifies the dimension of the array that will be *collapsed*, rather than the dimension that will be returned
+* other aggregation functions:
+	* ```NaN```-safe functions that compute the result while ignoring missing values, e.g. ```np.nansum```
 ### Computation on Arrays: Broadcasting
+*broadcasting functionality of NumPy is an alternative to vectorizing operations*
+* Broadcasting allows binary operations to be performed on arrays of different sizes
+* with a mental model of stretches or duplicates values of M into the array and adds results
+	```M+a```
 ### Comparisons, Masks, and Boolean Logic
 ### Fancy Indexing
 ### Sorting Arrays

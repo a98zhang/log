@@ -115,6 +115,10 @@ The key to make the computation on NumPy arrays fast is to use **vectorized** op
 * Broadcasting allows binary operations to be performed on arrays of different sizes
 * with a mental model of stretches or duplicates values of M into the array and adds results
 	```M+a```
+* rules of broadcasting
+	* if the two arrays differ in their number of dimensions, the shape of the one with fewer dimensions is padded with ones on its leading(left) side.
+	* if the shape of the two arrays does not match in any dimension, the array with shape equal to 1 in that dimension is stretched to match the other shape.
+	* if in any dimension the sizes disagree and neither is equal to 1, an error is raised. 
 ### Comparisons, Masks, and Boolean Logic
 ### Fancy Indexing
 ### Sorting Arrays

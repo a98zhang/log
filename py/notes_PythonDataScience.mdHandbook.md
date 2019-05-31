@@ -119,7 +119,32 @@ The key to make the computation on NumPy arrays fast is to use **vectorized** op
 	* if the two arrays differ in their number of dimensions, the shape of the one with fewer dimensions is padded with ones on its leading(left) side.
 	* if the shape of the two arrays does not match in any dimension, the array with shape equal to 1 in that dimension is stretched to match the other shape.
 	* if in any dimension the sizes disagree and neither is equal to 1, an error is raised. 
+* broadcasting in practice
+	* centering an array: 	```X_cemtered = X - Xmean```
+	* plotting a two-dim function
+		```
+		x = np.linspace(0, 5, 50)
+		y = np.linspace(0, 5, 50)[:, np.newaxis]
+		z = np.sin(x) ** 10 + np.cos(10 + y * x) * np.cos(x)
+		%matplotlib inline
+		import matplotlib.pyplot as plt
+		plt.imshow(z, origin='lower', extent=[0, 5, 0, 5], cmap='viridis')
+		plt.colorbar();
+		```
 ### Comparisons, Masks, and Boolean Logic
+*masking comes up when you want to extract, modify, count or otherwise manipulate values in an array based on some criterion*
+* similar to ufuncs that do fast element-wise arithmetic operations on arrays, some ufuncs can be used to do element-wise *comparisons* over arrays: ``` < > <= >= != ==```
+* the result of these comparison operators is always an array with a Boolean data type
+* compute aggregates on a boolean array
+	* to count the number of ```true``` entries: ```np.count_nonzero(x<6)```
+	* or ```np.sum(x<6)``` allows operations along rows/columns
+	* to check whether any or all the values are true: ```np.any(x>8); np.all(x<0)```
+	* boolean operator: ``` & (and) | (or) ^ (xor) ~ (not)```
+* boolean array as masks
+	* to select values from the array, index on the boolean array ``` x[x < 5]```, what is returned is a one-dim array filled with all the values that meet 
+* Note: and/or gauge the truth or falsehood of *entire object*, while &/| refers to *bit within* each object.
+
 ### Fancy Indexing
+
 ### Sorting Arrays
 ### Structured Data: NumPy's Structured Arrays

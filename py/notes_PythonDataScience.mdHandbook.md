@@ -142,9 +142,25 @@ The key to make the computation on NumPy arrays fast is to use **vectorized** op
 	* boolean operator: ``` & (and) | (or) ^ (xor) ~ (not)```
 * boolean array as masks
 	* to select values from the array, index on the boolean array ``` x[x < 5]```, what is returned is a one-dim array filled with all the values that meet 
-* Note: and/or gauge the truth or falsehood of *entire object*, while &/| refers to *bit within* each object.
+* Note: ```and/or``` gauge the truth or falsehood of *entire object*, while ```&/|``` refers to *bit within* each object.
 
 ### Fancy Indexing
-
+*fancy indexing means passing an array of indices to access multiple array elements at once*
+* the return values reflects the *broadcasted* shape of the indice, rather than the shape of the array being indexed
+* using fancy indexing to select subsets of rows from a matrix: often used to quickly partition datasets (e.g. in train/test splitting for validation of statistical models, sampling approaches to answering statistical questions.
+	```
+	indices = np.random.choice(X.shape[0], 20, replace=False)
+	selection = X[indices] 
+	```
+* using fancy indexing to modify values
 ### Sorting Arrays
+* fast sorting in NumPy: quicksort algorithm
+	* ```np.sort(x)``` returns a sorted version of the array without modifying the input
+	* ```x.sort()``` sorts the array in-place
+	* ```np.argsort(x)``` returns the indices of the sorted elements, thus can be used (via fancy indexing) to construct the sorted array ```x[np.argsort(x)]```
+	* NumPy's sorting allows sorting along rows or columns using ```axis``` argument
+* partial sorts: partitioning (to find the *k* smallest values in the array)
+	* ```np.partition(x,k)``` returns a new array with the smallest k values to the left of the partition, and the remaining values to right. Within two partitions, the elements have arbitrary order
+	* ```np.argpartition``` computes indices of the partition
+
 ### Structured Data: NumPy's Structured Arrays

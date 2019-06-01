@@ -6,7 +6,7 @@
 * Exploring Modules/Importing with Tab-completion/WildCard matching
 	* Using underscore to list explicitly private and special methods
   ```str.*find*? ```
-## 2. NumPy Intro
+## 2. NumPy
 *"to think of all data fundamentally as arrays of numbers"*
 ### Understanding Data Types in Python
 * compare to Java and C, Python is dynamically-typed language.
@@ -41,7 +41,7 @@ x3 = np.random.randint(10, size=(3, 4, 5))  # Three-dimensional array
 	```
 	x = np.array([1,2,3])
 	x.reshape((1,3))  	# row vector via reshape
-	x[np.newaxis, :]	# row vector via newaxis
+	x[np.newaxis, :]	# row vector via newaxis, newaxis expands dimensions
 	x.reshape((3,1))	# column vector via reshape
 	x[:, np.newaxis]	# column vector via newaxis
 	```
@@ -164,3 +164,43 @@ The key to make the computation on NumPy arrays fast is to use **vectorized** op
 	* ```np.argpartition``` computes indices of the partition
 
 ### Structured Data: NumPy's Structured Arrays
+*the use of NumPy's **structured arrays** and **record arrays** is for efficient storage for compound, heterogenous data, but more often used is ```Dataframe``` in Pandas*
+* use structured arrays to store related compound data
+	```
+	import numpy as np
+	name = ['Alice', 'Bob', 'Cathy', 'Doug']
+	age = [25, 45, 37, 19]
+	weight = [55.0, 85.5, 68.0, 61.5]
+	data = np.zeros(4, dtype={'names':('name', 'age', 'weight'),
+                          'formats':('U10', 'i4', 'f8')})
+	```
+	* to access values either by index ```data[0]``` or by name ```data['name']```
+	* advanced by Boolean masking, e.g. ```data[data['age'] < 30]['name']```
+	* creating structured arrays
+		```
+		np.dtype([('name', 'S10'), ('age', 'i4'), ('weight', 'f8')])
+		np.dtype({'names':('name', 'age', 'weight'), 
+         		 'formats':((np.str_, 10), int, np.float32)})
+		np.dtype('S10,i4,f8')
+		```
+* use ```np.recarray``` to access fields as attributes instead of as dictionary keys
+	```
+	data_rec = data.view(np.recarray)
+	data_rec.age
+	```
+## 3.  Pandas
+### Introducing Pandas Objects
+
+
+Data Indexing and Selection
+Operating on Data in Pandas
+Handling Missing Data
+Hierarchical Indexing
+Combining Datasets: Concat and Append
+Combining Datasets: Merge and Join
+Aggregation and Grouping
+Pivot Tables
+Vectorized String Operations
+Working with Time Series
+High-Performance Pandas: eval() and query()
+Further Resources

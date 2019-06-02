@@ -190,8 +190,30 @@ The key to make the computation on NumPy arrays fast is to use **vectorized** op
 	```
 ## 3.  Pandas
 ### Introducing Pandas Objects
-
-
+*Pandas objects can be thought of enhanced versions of NumPy structured arrays in which the rows and columns are identified with labels rather than simple integer indices. The three fundamental Pandas data structures are ```Series```, ```DataFrame```, ```Index```.*
+* The Pandas Series Object
+	* to construct a series object: ```pd.Series(data, index=index)
+	* is one-dimensional array of indexed data, wrapping both a sequence of values and a sequence of indices, which we can access with ```values``` and ```index``` attributes.
+	* can hence be thought of as a generation of a numpy array, but with an explicitly defined index associated with the values (v.s. numpy array), hence allows index to be values of any desired type
+	* can hence be thought of as a specialized dictionary which maps typed keys to a set of typed calues. 
+		* one can construct a ```Series``` object directly from a Python dictionary, where the index is drawn from the sorted keys.
+		* ```Series``` supports array-style operations such as slicing (v.s. dictionary)
+	
+* The Pandas DataFrame Object
+	* to construct a dataframe object: ```pd.DataFrame(the columns, columns=colnames)```
+		```
+		pd.DataFrame(population, columns=['population'])
+		data = [{'a': i, 'b': 2 * i} for i in range(3)]	 # from a list of dicts
+		pd.DataFrame(data)
+		pd.DataFrame({'population': population, 'area': area}) # from a dictionary of series objects
+		pd.DataFrame(np.random.rand(3, 2),  # from two-dim numpy array
+			columns=['foo', 'bar'], index=['a', 'b', 'c'])
+		A = np.zeros(3, dtype=[('A', 'i8'), ('B', 'f8')])   
+		pd.DataFrame(A)			# from structured array
+		```
+	* can be thought of a two-dimensional array with both generalized row indices and generalized column names
+	* can be thought of a specialization of a dictionary that maps a column name to a ```Series``` of column data
+* The Pandas Index Object
 Data Indexing and Selection
 Operating on Data in Pandas
 Handling Missing Data

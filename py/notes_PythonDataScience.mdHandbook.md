@@ -213,8 +213,13 @@ The key to make the computation on NumPy arrays fast is to use **vectorized** op
 		```
 	* can be thought of a two-dimensional array with both generalized row indices and generalized column names
 	* can be thought of a specialization of a dictionary that maps a column name to a ```Series``` of column data
+	
 * The Pandas Index Object
-Data Indexing and Selection
+	 * to construct a index object: ```pd.Index([2, 3, 5, 7, 11])```
+	 * can be thought of as an immutable array (v.s. numpy array), which makes it safer to share indices between multiple dataframes and arrays
+	 * can be thought of as an ordered set, thus can follow many of the conventions used by Python's built-in set data structure (hence unions, intersections, differences, and other combinations ```&, |, ^```)
+	
+### Data Indexing and Selection
 Operating on Data in Pandas
 Handling Missing Data
 Hierarchical Indexing

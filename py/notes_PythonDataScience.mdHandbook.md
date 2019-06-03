@@ -259,6 +259,21 @@ Since a ```DataFrames``` can be thought of a *dictionary* of related ```Series``
 		* ```ix```: hybrid ```data.ix[:3, :'pop']```
 	* slicing, masking are interpreted row-wise (v.s. indexing: column-wise)
 ### Operating on Data in Pandas
+*Pandas allows tasks such as keeping the context of data and combining data from different sources foolproof, as unary operations like negation and trigonometric functions will preserve index and column labels while binary operations such as addition and multiplication will align indices when passing the objects to the ufunc*
+* Ufuncs: index preservation
+	If we apply a NumPy ufunc on either ```Series``` or ```DataFrame``` object, the result will be another Pandas object with the indices preserved
+* Ufuncs: index alignment
+	For binary operations on two ```Series``` or ```DataFrame``` objects, Pandas will aligh indices in the process of performing the operation (convenient for incomplete data)
+	* In Series
+		* any missing values are filled in with NaN by default. This fill value can be modified using appropriate object methods, e.g. A.add(B, fill_value=0)
+	* In DataFrame
+		* indices will be aligned irrespective of their order in the two objects and sorted in the result
+		```+ - * / // - ** %``` ->
+		``` add(), sub(), mul(), div(), floordiv(), mod()```
+* Ufuncs: operations between Dataframe and Series
+Operations between a DataFrame and a Series are similar to operations between a two-dimensional and one-dimensional NumPy array
+	* In Pandas, the convention similarly operates row-wise by default
+	* to operate column-wise, use the object methods while specifying the axis keyword, e.g. ```df.subtract(df['R'], axis=0)```
 ### Handling Missing Data
 
 ### Hierarchical Indexing

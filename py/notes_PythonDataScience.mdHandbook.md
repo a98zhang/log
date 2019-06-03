@@ -220,14 +220,53 @@ The key to make the computation on NumPy arrays fast is to use **vectorized** op
 	 * can be thought of as an ordered set, thus can follow many of the conventions used by Python's built-in set data structure (hence unions, intersections, differences, and other combinations ```&, |, ^```)
 	
 ### Data Indexing and Selection
-Operating on Data in Pandas
-Handling Missing Data
-Hierarchical Indexing
-Combining Datasets: Concat and Append
-Combining Datasets: Merge and Join
-Aggregation and Grouping
-Pivot Tables
-Vectorized String Operations
-Working with Time Series
-High-Performance Pandas: eval() and query()
-Further Resources
+* data selection in Series
+Since a ```Series``` builds on a *dictionary-like* interface and provides *array-style* item  selection via the same basic mechanisms as NumPy arrays
+	* Like a dictionary, the keys/indices and values in a ```Series``` can be
+		* accessed through
+		```
+		'a' in data
+		data.keys()
+		list(data.items())
+		```
+		* modified with
+		```data['e'] = 25```
+	* Like a one-dimensional NumPy array, a ```Series``` can be 
+		* sliced 
+		```
+		data['a':'c']	# explicit index: final index included
+		data[0:2]	# implicit index: final index excluded
+		```
+		* masked ```data[(data > 0.3) & (data < 0.8)]```
+		* fancy indexed ```data[['a', 'e']]```
+	* indexers: to avoid potential confusion in the case of integer indexes, special indexer attributes are used to expose particular slicing interface to the data
+		* ```loc```: always references the explicit index
+		* ```iloc```: always references the implicit index (Python-style)
+		* ```ix```: standard []-based indexing	
+* data selection in DataFrame
+Since a ```DataFrames``` can be thought of a *dictionary* of related ```Series``` object as well as a two-dimensional or structured *array*
+	* Like a dictionary, the individual ```Series``` that make up the columns of the ```DataFrame``` can be
+		* accessed through
+		``` data['area']    # equivalent to but better than attribute-style access (data.area) ```
+		* modified with
+		```data['density'] = data['pop'] / data['area']```
+	* Like an enhanced two-dimensional array, a ```Series``` can be 
+		* transposed ```data.T```
+		* however, the dictionary-style indexing of columns precludes array interface. In particular, passing a single index to an array accesses a row while passing a single "index" to a ```DataFrame``` accesses a column
+	* indexers: 
+		* ```loc```: explicit index and column names ```data.loc[:'Illinois', :'pop'] ```
+		* ```iloc```: implicit index (Python-style) ```data.iloc[:3, :2]```
+		* ```ix```: hybrid ```data.ix[:3, :'pop']```
+	* slicing, masking are interpreted row-wise (v.s. indexing: column-wise)
+### Operating on Data in Pandas
+### Handling Missing Data
+
+### Hierarchical Indexing
+### Combining Datasets: Concat and Append
+### Combining Datasets: Merge and Join
+### Aggregation and Grouping
+### Pivot Tables
+### Vectorized String Operations
+### Working with Time Series
+### High-Performance Pandas: eval() and query()
+### Further Resources

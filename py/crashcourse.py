@@ -14,9 +14,9 @@ sorted(project_members, reverse=False)    # temporary
 project_members.reverse()
 
 for member in project_members:
-  print(member)
+    print(member)
 for value in range(1,5):
-  print(value)
+    print(value)
 indexes = list(range(1,5))
 odd_indexes = list(range(1,5,2))
 
@@ -29,10 +29,10 @@ values = list(range(1,10))[-3:]
 employees = project_members[:]   # replicate list
 
 if project_members: 
-  for member in members:
-    assign_task()
+    for member in members:
+        assign_task()
 else:
-  print('You currently don't have any member yet')
+    print('You currently don't have any member yet')
 
 # Tuple 元组：有序集合，静态，不可修改(immutable)
 roles = (product_manager, engineer)

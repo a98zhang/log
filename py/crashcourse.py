@@ -221,3 +221,23 @@ with open(filename, 'w') as fo:
     json.dump(numbers, fo)
 with open(filename) as fin:
     numbers = json.load(fin)
+    
+# 测试代码 test_profile_function.py
+# 单元测试：用于核实函数的某个方面没有问题
+import unittest
+from employee import build_profile
+# 测试用例：一组单元测试
+class ProfilesTestCase(unittest.TestCase):
+    def test_chinese(self):   # 所有test打头的method都将自动运行
+        profile = build_profile('詹昊恂','senior algorithm engineer')
+        # assert用以核实得到的结果是否与期望的结果一致，若此处不一致，将通知
+        self.assertEqual(profile, {'name': '詹昊恂', 'title': 'senior algorithm engineer'})
+unittest.main()
+# 测试类
+class EngineerTestCase(unittest.TestCase):
+    def setUp(self):
+        # 创建一个对象和一组答案，供测试使用
+        self = Engineer()
+        self.languages = ['python', 'C++', 'R']
+    def .....
+    

@@ -196,13 +196,20 @@ new_engineer.machine.describe_machine()
 # import a class
 from employee import Employee 
    
-# import files: use 'with' keyword to avoid 'close' 
+# 读取文件 use 'with' keyword to avoid 'close' 
 file_path = '/home/mnvai/huantong_poc_data/data/example_file.txt'
 # 全部读取
 with open(file_path) as fo:
-   contents = fo.read()
-   print(contents.rstrip())
+   lines = fo.readlines()
+for line in lines
+   print(lines.rstrip())
 # 逐行读取
 with open(file_path) as fo:
    for line in fo:
-      print(line)
+      print(line.rstrip())
+
+# 写入文件
+with open(file_path, 'w') as fo:
+   fo.write('Almost there.')
+
+# TODO: 异常情况处理

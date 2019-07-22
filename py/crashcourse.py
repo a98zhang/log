@@ -136,8 +136,7 @@ from employee import build_profile # 将模块中的特定函数导入
 build_profile('ashley', 'intern', age=20)
 
 from employee import get_employee as gt
-gt('hunt', 'senior algorithm engineer, ['huantong', 'conversation'])
-   
+gt('hunt', 'senior algorithm engineer', ['huantong', 'conversation'])
    
 # Object-oriented programming: Class - Object
 # 类名中的每个单词的首字母都大写,而不使用下划线。实例名和模块名都采用小写格式,并在单词之间加上下划线。
@@ -199,17 +198,26 @@ from employee import Employee
 # 读取文件 use 'with' keyword to avoid 'close' 
 file_path = '/home/mnvai/huantong_poc_data/data/example_file.txt'
 # 全部读取
-with open(file_path) as fo:
-   lines = fo.readlines()
+with open(file_path) as fin:
+   lines = fin.readlines()
 for line in lines
    print(lines.rstrip())
 # 逐行读取
-with open(file_path) as fo:
-   for line in fo:
+with open(file_path) as fin:
+   for line in fin:
       print(line.rstrip())
 
 # 写入文件
 with open(file_path, 'w') as fo:
    fo.write('Almost there.')
 
-# TODO: 异常情况处理
+# TODO: chapter 10.3 异常情况处理
+
+# 存储数据: json模块可以将简单的python数据结构转储到文件中
+import json
+numbers = [2,5,6,7,3,2,11]
+filename = 'numbers.json'
+with open(filename, 'w') as fo:
+    json.dump(numbers, fo)
+with open(filename) as fin:
+    numbers = json.load(fin)

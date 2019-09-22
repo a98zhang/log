@@ -1,0 +1,206 @@
+---
+title: "week1-notes"
+author: "az"
+date: "9/3/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Week 1: Intro to R
+
+### 1.Intro to R Part 1
+
+#### Tying in commands: interacting with the console
+
+##### storing results in a variable
+```{r storing results in a variable}
+tempt <- 2 + 2
+```
+
+
+##### whitespace
+```{r whitespace}
+library(cowsay)
+say("This function call far too wide to fit all on one line",
+    "poop")
+```
+##### workspace
+```{r workspace}
+ls()
+rm("tempt")
+rm(list=ls())
+```
+
+##### vectors
+```{r vectors}
+v1 <- c(1,2,3)
+```
+
+##### vectorized operations
+```{r vectorized operations}
+iq <- c(86, 101, 127, 99)
+std_iq <- (iq - 100)/15
+std_iq
+```
+
+##### function syntax
+Generic syntax: `functionname(arg1, arg2, arg3, ...)`
+Each function has *named arguments*: those without default values are mandatory, those with these values are optional. 
+
+```{r function syntax}
+# function rnorm() generates random numbers from the standard normal distribution
+#rnorm() will return error as rnorm(n, mean = 0, sd = 1), no default for n
+rnorm(3)
+rnorm(3, 100)
+rnorm(3, sd = 100)
+```
+
+#### add on packages
+notice the difference between *installing a package* and *loading a package*
+```{r add on packages}
+#install.packages('fortunes')
+library(fortunes)
+fortune()
+```
+
+#### help
+```{r help, echo=FALSE}
+help('say')                    # 1 (if package is loaded)
+?say                           # 2
+help('say', package='cowsay')  # 3
+??help                         # 4 (search for help files)
+help.start()                   # 5 (start up help in browser)
+
+```
+
+### 2.Intro to R Part 
+
+#### Organizing a project
+##### Work Directory
+To set work directory:
+1. `Session` | `Set Working Directory`
+2. in console, `setwd('')`
+
+* Script should only reference files from (1) web (2) working dir (3) subdir
+* load file using relative path (forward slashes)
+
+#### Structuring your script
+To develop reproducible R script, there are certain conventional structure to follow:
+1. load all add-on packages
+2. define custom functions
+3. import data
+4. perform the analysis
+5. save your work
+
+* a single chunk for each output
+```{r code chunk, message=FALSE, warning=FALSE}
+# suppress messages and warnings in code chunks
+```
+
+#### Basic data types
+Four main basic data types in R:
+1. `character`
+2. `integer` e.g. `10L`
+3. `double` aka `numeric`, e.g. `10`, `3.13`
+4. `logical`
+
+```{r basic data types}
+class(.5)      # class() to know the data type of something
+class(10)
+class(10L)
+mode(c(1,2,3)) # mode() function is specifically for vectors
+```
+
+#### Basic container types
+vector: an ordered container of elements of the same data type, a variable to store multiple values (elements)
+* when we entered a single number, R created a vector with a single element
+
+```{r vector}
+vec1 <- 200:400
+vec2 <- c(1L, 19L, 37L, 55L)
+vec1[vec2]
+# vectors can be named
+vec3 <- c(first=77.9, second=-13.2, third=100.1)
+vec3
+vec3[c("second","third","first")]
+vec3[c(TRUE, FALSE, TRUE)]
+# other ways of creating vectors
+rep(0,10)
+rep(c(1L,3L),7)
+evens <- rep(c(FALSE, TRUE), 100)
+vec1[evens]
+
+```
+List: a collection of data of different data types
+
+```{r list}
+albums <- 
+  list(
+    Michael_Jackson = c(
+      "Off the Wall",
+      "Thriller",
+      "Bad",
+      "Dangerous"
+    ),
+    Nirvana = c(
+      "Bleach",
+      "Nevermind",
+      "In Utero"
+    )
+  )  
+albums[1]
+albums$Nirvana
+```
+
+
+#### Tabular data
+
+Tabular data, stored in `data.frame` or `tibble` are a special type of list, , in which each column has the same number of elements.
+There are three ways to look at the tibble `View()`, `print()`, `glimpse()`
+```{r tibble}
+months <- tibble(ID = 1:12,
+                 name = c("Jan", "Feb", "Mar", "Apr",
+                          "May", "Jun", "Jul", "Aug",
+                          "Sep", "Oct", "Nov", "Dec"))
+dim(months)
+```
+
+#### Importing data
+
+```{r data import}
+library(tidyverse)
+data <- read_csv("C:/Users/ashle/Job.Intern.Lab/CDL/FormEx/formex6_wide_new.csv")
+# the first line of the data is used as the column names
+read_csv("a,b,c
+         1,2,3
+         4,5,6")
+# to tweak for multiple lines of meta data
+read_csv("first line to skip
+         second line to skip
+         x,y,z
+         1,2,3", skip=2)
+read_csv("# A comment to skip
+         x,y,z
+         1,2,3", comment="#")
+# to tweak for an absence of column names
+read_csv("1,2,3\n4,5,6", col_names=FALSE)
+read_csv("1,2,3\n4,5,6", col_names=c("x","y","z"))
+# to tweak for missing values
+read_csv("1,2,3\n4,5,.", na=".")
+```      
+
+
+#### Pipes
+Pipes(`%>%`) strings together a sequence of commands in 
+```{r pipes}
+x <- sample(1:10, 5, replace=TRUE)
+y <- unique(x)
+sort(y, TRUE)
+# rewrite using pipes
+sample(1:10, 5, replace=TRUE) %>%      # the result is passed to unique()
+  unique() %>%          # always as the first argument
+  sort(TRUE)
+```

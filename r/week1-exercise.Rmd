@@ -1,0 +1,53 @@
+---
+title: "week1-exercise"
+author: "az"
+date: "9/3/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r set up}
+vignette(package='cowsay')
+vignette('cowsay_tutorial', package='cowsay')
+library(cowsay)
+```
+
+Make a cat say, “FEED ME”
+```{r question 1}
+say("FEED ME")   # as default value for argument "by" is "cat"
+```
+
+Make a shark say “Hello world!”
+```{r question 2}
+say("Hello world!", "shark")
+```
+
+Make anything produce a famous quote
+```{r question 3}
+say("Keep moving and Love abundantly", "owl")
+```
+
+Make a clippy warn the user about the impending apocalypse
+```{r question 4}
+say("World gonna end, you sure?", "clippy")
+```
+
+Make a cat produce a random quote from an R coder. You should get a different quote every time you run the code (hint: read the documentation for cowsay::say()).
+```{r question 5}
+say("fortune")
+```
+
+Define a variable creature and assign to it the value of one of the types of creatures accepted by the say() function. Then use the variable to output the current time.
+```{r question 6}
+creature <- "owl"
+say('time', creature)
+```
+
+Change the value of the variable creature to some other thing, and make it display the time using the date() function in base R.
+```{r question 7}
+creature <- 'snowman'
+say(date(), creature)
+```

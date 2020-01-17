@@ -546,6 +546,35 @@ quit;
 
 ##### directing `data` step output
 
+* use `output` statement to control row output
+  * by default an implicit `output ` and  `return`
+  * use an *explicit* `output` statement to force SAS to write PDV contents (a row) - no implicit `output` any more at the conclusion but still implicit `return`
+  * directing **when** and **where** to output
+
+    ```SAS
+    data t1 t2 t3;
+        set input;
+        if c1 then output t1;
+        else if c2 then output t2;
+        else output t3;
+        output;
+    run;
+  ```
+  
+* use `drop=` / `keep=` dataset options to specify a unique list of columns for each table (PDV will keep track of them)
+
+  ```SAS
+  data t1(drop=c1 c2)
+  	 t2(keep=c3);
+  	 set input(drop=c2);
+  ```
+
+  * use `drop`/`keep` options in `set` statement if not needed for processing
+
+  * use `drop`/`keep` options in `data` statement or `drop`/`keep` statement if can be needed for processing
+
+  * if using un-kept columns to compute new columns, both columns will be in the output table but un-initialized. 
+
 ### 202. Summarizing data
 
 ### 203. Manipulating data with functions

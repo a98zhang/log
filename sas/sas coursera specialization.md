@@ -1,4 +1,4 @@
-# Getting Started with SAS Programming
+Getting Started with SAS Programming
 
 ### 102. Accessing  data
 
@@ -559,6 +559,9 @@ quit;
         else output t3;
         output;
     run;
+    ```
+  ```
+  
   ```
   
 * use `drop=` / `keep=` dataset options to specify a unique list of columns for each table (PDV will keep track of them)
@@ -577,13 +580,432 @@ quit;
 
 ### 202. Summarizing data
 
+##### Creating an accumulative column
+
+```SAS
+data output;
+	set input;
+	* Complete Ver.
+	retain accum 0;
+	accum = sum(accum, curr)
+	* Shortcut Ver.
+	accum+curr;
+run;
+```
+
+* because all computed columns will be reset to `missing` for the new iteration, to create an accumulating column, one needs to overwrite the default behavior of PDV
+* use `retain` statement (compile-time statement) to: `retain col <init-val>`
+  * set initial value before the first iteration 
+  * retain the value each time the PDV reinitialize
+*  use `sum` statement as a shortcut for (1) creating column and setting initial value to 0 (2) retaining value of the column (3) add right column to accumulating column for each row  (4) ignoring missing values 
+
+##### Processing data in groups
+
+```SAS
+proc sort data=input out=sorted;
+	by Col;
+	
+run;
+data output;
+	set sorted;
+	by Col;
+	if expression;
+	<statements for a subgroup>
+run;
+```
+
+* use `by <descending> col` in `data` step to process data in sorted table (first use `proc sort` to sort data by columns) by groups 
+
+* use `if` with `first.col` and `last.col` to subset rows in the execution phase
+
+  * `first.col` and `last.col` are added to PDV (with values 0/1) - temporary and will be automatically dropped before writing each row to the output table
+  * cannot use `where` statement (compile-time-statement) to subset rows using `first.col` and `last.col` because they do not exist in the input table
+  * use `subsetting if expressions`,  processed during the execution phase
+    *  if `true`, continue to execute the remaining statement 
+    * if `false`, stop processing for that iteration and skip explicit/implicit `output` but just return, aka this row will not be written
+    * use if as early as possible
+
+  * to reset an accumulating column for each subgroup
+
+    ```SAS
+    data output;
+    	set input;
+    	by Col;
+    	if first.Col=1 then accum=0;
+    ```
+
+  * use multiple `by` columns: each column has its own `first./last.`variables in the PDV: need to use  `first./last.`variables  for all columns
+
 ### 203. Manipulating data with functions
+
+##### Understanding SAS functions and `call` routines
+
+* function: name, predefined process to produce a value.
+
+* specifying `column list` - a list of columns as arguments in a function 
+
+  1. `col1-coln` 
+  2. `string:` 
+  3. `col--col`: physical range of columns from left to right in a table
+  4. `_numeric_`/`_character_`/`_all_`
+
+  * no need to use `of` keyword in `format` statement, but `of` is required when using column lists as argument in a function or `call` routine
+
+  ```SAS
+  /* Numbered Range: col1-coln where n is a sequential number */ 
+  Mean2=mean(of Quiz1-Quiz5);
+  /* Name Prefix: all columns that begin with the specified character string */ 
+  Mean3=mean(of Q:);
+  /* Physical Range */
+  format Quiz1--AverageQuiz 3.0;
+  /* Keywords */
+  format _numeric_ comma.;
+  ```
+
+* use `call` routine to modify data: `call routine(argument-1, <...>)`
+  
+  ```SAS
+  if Name in("Barbara", "James") 
+  	then call missing(of Q:);
+  ```
+  
+  * `call` routine performs a computation or a system manipulation based on the inputs (arguments), like functions.
+  * does not return value but alters column values or perform other system functions
+  * arguments must be column names
+
+##### Using numeric and date functions
+
+* Numeric functions:
+
+    `rand('distribution', ...parameters)`: 
+
+    `largest(k, ...columns)`
+
+    `round(number<,round-unit>)`/`ceil`/`floor`/`int`
+
+    * these functions alter the data by changing precision of while format only changes the display
+    
+    ```SAS
+    id = rand("integer", 1000, 9999);
+    R1st=largest(1, of Q:);
+    R2nd=largest(2, of Q:);
+    R3rd=largest(3, of Q:);
+    Avg = round(mean(of R:), .1);
+    ```
+
+* Date, datetime (#seconds from 1/1/60 midnight), time (#seconds from midnight) values
+
+  `datepart`/`timepart(datetime-value)`
+
+  `intck('interval', start, end <,'method'>)`
+
+  * discrete (`'D'`, default method): aka how many Saturday assume week ends at Saturday)
+  * continuous (`'C'`)
+
+  `intnx(interval, start, increment <,'alignment)`: adjust and shift date values
+
+  ```SAS
+  *extract data from a datetime val
+  Date=datepart(ISO_Time);
+  Time=timepart(ISO_Time);
+  *calculate date 
+  intck('week', begin, end, 'C');
+  *shift dates
+  NewDate=intnx('month', Date, 0, 'end'/'middle'/'same');
+  ```
+
+##### Using character functions
+
+`upcase`/``propcase`/`substr`
+
+`compbl`/`compress`/`strip`  to remove characters from a string
+
+`scan` to extract words from a string
+
+`find` to search for character string
+
+* modifiers `'I'` case insensitive search
+* modifiers `'T'` trim leading and training blanks
+
+`length`/`anydigit`/`anyalpha`/`anypunct` 
+
+`tranwrd` to replace character string
+
+`cat`/`cats`/`catx` to combine strings 
+
+```SAS
+*remove characters
+compbl(Col);
+compress(Col, '- ');
+*extract words
+scan(Col,-1, ',');
+*search substring
+StartIdx=find(Col,'substr','modifier');
+*replace string
+NewS=tranwrd(S, '2019', '2020');
+```
+
+##### Using special functions to convert column type
+
+* SAS automatically attempts conversion, but it may fail. Thus use special functions to control data conversion
+  * `input(source, informat)` converts character to numeric providing format to read in data (specify most inclusive width but do not specify decimal point)
+
+    ```SAS
+    Date=input(DateStr,date9.);
+    *generic informat for dates
+    Date=input(DateStr,ANYDTDTEw.)
+    *change date styles
+    options datestyle=DMY;
+    ```
+
+  * `put(source, format)` converts numeric to character
+
+    ```SAS
+    Day=put(Date,downame3.);
+    ```
+
+* cannot use these functions to convert existing columns for the attribute from `set` controls the column type and cannot be changed later in the program
+
+  ```SAS
+  data output;
+  	set input(rename=(Col=CharC));
+  	Col=input(CharC, format);
+  	drop CharC;
+  run;
+  ```
 
 ### 204. Creating and using custom formats
 
+Formats that you use in the DATA step are  permanent attributes that are stored in the descriptor portion of the table. Formats that you use in a PROC step are temporary attributes.
+
+##### Creating and using custom formats
+
+* use `proc format` to create custom formats 
+
+  ```SAS
+  proc format;
+  	value f-name val-or-range-1='formatted-val'
+  				 val-or-range-2='formatted-val';
+  	value f-name val-or-range-1='formatted-val';
+  	
+  	*character format example
+  	value $genfmt 'F'='Female'
+  				  'M'='Male';
+  				  ' '='Missing'
+  				  other='Miscode';
+  	*numeric format example
+  	value hrange 50-<58='Below'
+  				 58-60='Average'
+  				 60<-70='Above';
+  run;
+  ```
+
+* using ranges:
+  *  `x-y` includes both `x` and `y`, while `<` excludes its nearest value
+  * keyword `low` and `high` reference to the lowest/highest possible value
+  * keyword `other` includes all values that don't match any other value or range
+  * if a value does not fit into any of the ranges, the actual value is displayed
+
+* used to display values differently, group raw values (for example, for better cross-tabulation)
+
+  ```SAS
+  BasinGroup=put(Basin, $region.);
+  ```
+
+##### Creating custom formats from tables
+
+* to read a table of values for a format, generate three specific columns: `fmtname`, t`start`, `label`
+
+  ```SAS
+  data fmtdata;
+  	retain FmtName '$sbfmt';
+  	set codes(rename=(val=Start labeled=Label));
+  	keep Start Label FmtName;
+  run;
+  
+  proc format cntlin=fmtdata;
+  run;
+  ```
+
+* by default, custom formats are stored in `work` library in a catalog `formats` (catalog: a SAS file that stores different types of info in smaller unit -catalog entries). One can use `library=` option to specify where to permanently save the format.
+
+  ```SAS
+  proc format library=pg2.myfmts;
+  proc format library=pg1;
+  ```
+
+* to search formats, SAS by default searches `work.formats`, `library.formats`. To specify additional locations, use global options `fmtsearch=`
+
+  ```SAS
+  options fmtsearch=(pg2.myfmts pg1.formats)
+  ```
+
+* to view all/certain formats
+
+  ```SAS
+  proc format fmtlib library=work;
+  	select $sbfmt catfmt;
+  run;
+  ```
+
 ### 205. Combining tables
+
+##### Concatenating tables
+
+Concatenating tables means joining rows of multiple tables.
+
+```SAS
+data output;
+	length Name $ 10;
+	set sum sum2017(rename=(Year=Yr)
+    				drop=Location);
+	<additional statements>
+run;
+```
+* if tables have same columns (aka same attributes), then just have multiple tables in `set` statement: `set input1 input2 ...;`
+* if the "same" column is named differently in different tables, use `rename=` option in `set ` statement
+* if one column is only in one table, one can use `drop=` option in `set` statement to drop this column.
+* note that multiple tables may have specified different attributes for variables, for example, different lengths. Use `length` statement before `set` statement to set attributes in PDV before reading from input.
+
+##### Merging tables
+
+Merging tables means joining columns of multiple tables (matching values of a common column in the table). Use `proc sql` or use `data` step.
+
+* one-to-one
+
+  * in compilation phase, all columns in the first table are added to PDV, then add additional cols in the second table to PDV
+  * in execution phase, examining the `by` column value  in both tables starting from the first row sequentially 
+
+  ```SAS
+  *use proc sort to sort first
+  proc sort 
+  	by common-col;
+  run; 
+  
+  *to use by, data must be sorted
+  data ouput;
+  	merge input1 input2(rename=(Basin=BasinCode)) ...;
+  	by common-col;
+  run;
+  ```
+
+* one-to-many
+
+  * if  the `by` value in the next row of each table does not match, check if either matches the current contents of the PDV
+  * if either matched, retain the matched and overwrite the un-matched
+  * if neither value matches, PDV is reinitialized and all columns are set to missing
+
+* nonmatching 
+
+  * nonmatching rows will be both included (in sorted order) with values missing
+
+##### Identifying matching and nonmatching rows
+
+* use `in=` option in `merge` statement to create temporary variable in PDV for flagging matching or non-matching values 
+* use subsetting `if` statement because `in` variables values are assigned during execution
+
+```SAS
+data output;
+	merge input1(in=var1)
+		  input2(in=var2);
+	by common-col;
+	if var1 and var2;
+run;
+```
+
+* if having columns from different tables with the same name and you want to keep both, use `rename=` option to avoid overwriting
+* use `proc sql` to joining multiple tables without a common column
 
 ### 206. Processing repetitive data
 
+##### Using iterative `do` loops
+
+```SAS
+do idx-col = start to stop <by incre>;
+*do Year= 1 to 3 by 1;
+	<repetitive codes>
+end;
+```
+
+* use nested `do` loop
+* reset value before loop of next data iteration
+
+##### Using conditional `do` loops
+
+```SAS
+*executes repetitively until a condition is true
+do until (expression);
+end;
+*executes repetitively while a condition is true
+do while (expression);
+end;
+*combine iterative with conditional
+do idx-col = start to stop <by incre> until | while (expression);
+```
+
+* `do until` has condition checked at the bottom of the loop; thus always executes at least once
+* `do while` has condition checked at the top of the loop; thus executes only if condition is true
+* the combining loop stops executing when the stop value is exceeded or the condition is met, whichever if first
+  * for `until` condition is checked before idx-col increments
+  * for `while`, the column is incremented at the bottom of loop before checking the `while` condition at the top of the loop.
+
 ### 207. Restructuring tables
+
+##### Restructuring data with `data` step
+
+* Table structure
+
+  * wide table : measures are split into multiple columns
+  * narrow table: measures are stacked in a single column
+
+* utilize behaviors of PDV in `data` step
+
+  * The`retain` statement holds values in the PDV across multiple iterations of the DATA step. The last row for each student includes both test score
+
+  ```SAS
+  *wide to narrow
+  data narrow;
+  	set wide;
+  	Subject='Math';
+  	Score=Math;
+  	output;
+  	Subject='Reading';
+  	Score=Reading;
+  	output;
+  run;
+  *narrow to wide
+  data wide;
+  	set narrow;
+  	by Name;
+  	retain Name Math Reading;
+  	if S="Math" then Math=Score;
+  	else if S="Reading" then Reading=Score;
+  	if last.name=1 then output;
+  run;
+  ```
+
+##### Restructuring data with `proc transpose` 
+
+```SAS
+proc transpose data=inT <out=outT
+			   prefix=Wind 	name=Windsource;
+	<ID col-name;>
+	<var col-name(s);>
+	<by col-name(s);>
+run;
+```
+
+* `proc transpose` transposing selected columns into rows (if not specified, only numeric values are transposed)
+
+* input tables should be sorted by `by` variable. Each unique combination of `by` values creates one row in the output table.
+
+* the values of `id` column are assigned as the new column names (must be unique)
+
+* the `var` statement limits the columns that are transposed to rows
+
+* `prefix=` option prefixes in front 
+
+  of the numbers that were transposed. 
+
+* `name=` option to rename column that contains the column names that were transposed from the input table.
 
